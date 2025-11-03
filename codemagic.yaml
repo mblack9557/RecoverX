@@ -1,0 +1,23 @@
+workflows:
+  recoverx-android:
+    name: RecoverX Android APK
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      java: "17"
+      vars:
+        APP_ID: "com.recoverx.app"
+    scripts:
+      - echo "Scaffolding Flutter project"
+      - rm -rf android ios lib test .metadata .dart_tool pubspec.* || true
+      - flutter --version
+      - flutter create --org ${APP_ID%.*} .
+      - echo "Copying RecoverX sources"
+      - bash scripts/setup_project.sh
+      - echo "Pub get"
+      - flutter pub get
+      - echo "Build release APK"
+      - flutter build apk --release
+    artifacts:
+      - build/app/outputs/flutter-apk/app-release.apk
